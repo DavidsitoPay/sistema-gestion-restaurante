@@ -26,9 +26,11 @@ app.include_router(orders.router)
 app.include_router(billing.router)
 app.include_router(reports.router)
 
+
 @app.get("/")
 def root():
     return {"status": "ok", "app": "Sistema Gestión Restaurante v1.0"}
+
 
 @app.get("/health")
 def health():

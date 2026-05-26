@@ -10,10 +10,11 @@ from app.schemas.schemas import AuditLogOut
 
 router = APIRouter(prefix="/api/reports", tags=["reports"])
 
+
 @router.get("/sales")
 def sales_report(date_from: Optional[date] = None, date_to: Optional[date] = None,
                  db: Session = Depends(get_db), _=Depends(require_roles(RoleEnum.ADMIN))):
-    q = db.query(Bill).filter(Bill.paid == True)
+    q = db.query(Bill).filter(Bill.paid)
     if date_from:
         q = q.filter(func.date(Bill.paid_at) >= date_from)
     if date_to:
@@ -29,6 +30,7 @@ def sales_report(date_from: Optional[date] = None, date_to: Optional[date] = Non
         "subtotal": round(total_sales - total_tax, 2),
     }
 
+
 @router.get("/top-products")
 def top_products(date_from: Optional[date] = None, date_to: Optional[date] = None,
                  limit: int = Query(10, ge=1, le=50),
@@ -38,13 +40,14 @@ def top_products(date_from: Optional[date] = None, date_to: Optional[date] = Non
                   func.sum(OrderItem.quantity * OrderItem.unit_price_snapshot).label("total_amount"))
          .join(OrderItem, OrderItem.item_id == MenuItem.item_id)
          .join(Order, Order.order_id == OrderItem.order_id)
-         .filter(OrderItem.canceled == False, Order.status == "CERRADO"))
+         .filter(~OrderItem.canceled, Order.status == "CERRADO"))
     if date_from:
         q = q.filter(func.date(Order.closed_at) >= date_from)
     if date_to:
         q = q.filter(func.date(Order.closed_at) <= date_to)
     results = q.group_by(MenuItem.item_id).order_by(func.sum(OrderItem.quantity).desc()).limit(limit).all()
     return [{"name": r.name, "qty": int(r.total_qty), "amount": round(float(r.total_amount), 2)} for r in results]
+
 
 @router.get("/audit", response_model=List[AuditLogOut])
 def audit_logs(date_from: Optional[date] = None, date_to: Optional[date] = None,

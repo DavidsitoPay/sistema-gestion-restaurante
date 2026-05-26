@@ -4,17 +4,21 @@ from datetime import datetime
 from decimal import Decimal
 from app.core.database import get_db
 from app.core.security import get_current_user, require_roles
-from app.models.user import (User, RoleEnum, RestaurantTable, TableStatus,
-                              Order, OrderStatus, Bill, AuditLog)
+from app.models.user import (
+    User, RoleEnum, RestaurantTable, TableStatus,
+    Order, OrderStatus, Bill, AuditLog,
+)
 from app.schemas.schemas import BillOut, PaymentRequest
 
 router = APIRouter(prefix="/api/billing", tags=["billing"])
 
 TAX_RATE = Decimal("0.12")
 
+
 def _log(db, entity, entity_id, action, user_id, details=None):
     db.add(AuditLog(entity=entity, entity_id=entity_id, action=action,
                     performed_by_user_id=user_id, details=details))
+
 
 @router.post("/orders/{order_id}/bill", response_model=BillOut)
 def generate_bill(order_id: int, db: Session = Depends(get_db),
@@ -37,6 +41,7 @@ def generate_bill(order_id: int, db: Session = Depends(get_db),
     db.commit()
     db.refresh(bill)
     return bill
+
 
 @router.post("/orders/{order_id}/pay", response_model=BillOut)
 def pay_bill(order_id: int, data: PaymentRequest, db: Session = Depends(get_db),
@@ -63,6 +68,7 @@ def pay_bill(order_id: int, data: PaymentRequest, db: Session = Depends(get_db),
     db.commit()
     db.refresh(bill)
     return bill
+
 
 @router.get("/orders/{order_id}/bill", response_model=BillOut)
 def get_bill(order_id: int, db: Session = Depends(get_db), _=Depends(get_current_user)):

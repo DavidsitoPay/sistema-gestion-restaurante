@@ -4,6 +4,7 @@ from datetime import datetime
 from decimal import Decimal
 from app.models.user import RoleEnum, TableStatus, OrderStatus
 
+
 # ── Auth ──────────────────────────────────────────────
 class Token(BaseModel):
     access_token: str
@@ -12,9 +13,11 @@ class Token(BaseModel):
     full_name: str
     user_id: int
 
+
 class LoginRequest(BaseModel):
     username: str
     password: str
+
 
 # ── Users ─────────────────────────────────────────────
 class UserCreate(BaseModel):
@@ -23,11 +26,13 @@ class UserCreate(BaseModel):
     full_name: str
     role: RoleEnum
 
+
 class UserUpdate(BaseModel):
     full_name: Optional[str] = None
     role: Optional[RoleEnum] = None
     active: Optional[bool] = None
     password: Optional[str] = None
+
 
 class UserOut(BaseModel):
     user_id: int
@@ -37,6 +42,7 @@ class UserOut(BaseModel):
     active: bool
     created_at: Optional[datetime] = None
     model_config = {"from_attributes": True}
+
 
 # ── Tables ────────────────────────────────────────────
 class TableCreate(BaseModel):
@@ -51,11 +57,13 @@ class TableCreate(BaseModel):
             raise ValueError("Capacidad debe ser mayor a 0")
         return v
 
+
 class TableUpdate(BaseModel):
     area: Optional[str] = None
     capacity: Optional[int] = None
     status: Optional[TableStatus] = None
     active: Optional[bool] = None
+
 
 class TableOut(BaseModel):
     table_id: int
@@ -66,15 +74,18 @@ class TableOut(BaseModel):
     active: bool
     model_config = {"from_attributes": True}
 
+
 # ── Menu ──────────────────────────────────────────────
 class CategoryCreate(BaseModel):
     name: str
+
 
 class CategoryOut(BaseModel):
     category_id: int
     name: str
     active: bool
     model_config = {"from_attributes": True}
+
 
 class MenuItemCreate(BaseModel):
     category_id: int
@@ -89,6 +100,7 @@ class MenuItemCreate(BaseModel):
             raise ValueError("Precio no puede ser negativo")
         return v
 
+
 class MenuItemUpdate(BaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
@@ -96,6 +108,7 @@ class MenuItemUpdate(BaseModel):
     active: Optional[bool] = None
     out_of_stock: Optional[bool] = None
     category_id: Optional[int] = None
+
 
 class MenuItemOut(BaseModel):
     item_id: int
@@ -107,11 +120,13 @@ class MenuItemOut(BaseModel):
     out_of_stock: bool
     model_config = {"from_attributes": True}
 
+
 # ── Orders ────────────────────────────────────────────
 class OrderItemCreate(BaseModel):
     item_id: int
     quantity: int
     notes: Optional[str] = None
+
 
 class OrderItemOut(BaseModel):
     order_item_id: int
@@ -122,9 +137,11 @@ class OrderItemOut(BaseModel):
     canceled: bool
     model_config = {"from_attributes": True}
 
+
 class OrderCreate(BaseModel):
     table_id: int
     notes: Optional[str] = None
+
 
 class OrderOut(BaseModel):
     order_id: int
@@ -137,13 +154,16 @@ class OrderOut(BaseModel):
     items: List[OrderItemOut] = []
     model_config = {"from_attributes": True}
 
+
 class AddItemRequest(BaseModel):
     item_id: int
     quantity: int = 1
     notes: Optional[str] = None
 
+
 class CancelItemRequest(BaseModel):
     reason: str
+
 
 # ── Bill ──────────────────────────────────────────────
 class BillOut(BaseModel):
@@ -156,8 +176,10 @@ class BillOut(BaseModel):
     issued_at: Optional[datetime] = None
     model_config = {"from_attributes": True}
 
+
 class PaymentRequest(BaseModel):
     amount: Decimal
+
 
 # ── Audit ─────────────────────────────────────────────
 class AuditLogOut(BaseModel):

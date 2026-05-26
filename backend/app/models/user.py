@@ -4,6 +4,7 @@ from sqlalchemy.sql import func
 from app.core.database import Base
 import enum
 
+
 class RoleEnum(str, enum.Enum):
     ADMIN = "ADMIN"
     HOST = "HOST"
@@ -11,11 +12,13 @@ class RoleEnum(str, enum.Enum):
     COCINA = "COCINA"
     CAJERO = "CAJERO"
 
+
 class TableStatus(str, enum.Enum):
     LIBRE = "LIBRE"
     OCUPADA = "OCUPADA"
     PENDIENTE = "PENDIENTE"
     PAGANDO = "PAGANDO"
+
 
 class OrderStatus(str, enum.Enum):
     ABIERTO = "ABIERTO"
@@ -24,6 +27,7 @@ class OrderStatus(str, enum.Enum):
     LISTO = "LISTO"
     ENTREGADO = "ENTREGADO"
     CERRADO = "CERRADO"
+
 
 class User(Base):
     __tablename__ = "users"
@@ -35,6 +39,7 @@ class User(Base):
     active = Column(Boolean, default=True)
     created_at = Column(DateTime, server_default=func.now())
 
+
 class RestaurantTable(Base):
     __tablename__ = "tables"
     table_id = Column(Integer, primary_key=True, index=True)
@@ -45,12 +50,14 @@ class RestaurantTable(Base):
     active = Column(Boolean, default=True)
     orders = relationship("Order", back_populates="table")
 
+
 class MenuCategory(Base):
     __tablename__ = "menu_categories"
     category_id = Column(Integer, primary_key=True, index=True)
     name = Column(String(80), unique=True, nullable=False)
     active = Column(Boolean, default=True)
     items = relationship("MenuItem", back_populates="category")
+
 
 class MenuItem(Base):
     __tablename__ = "menu_items"
@@ -62,6 +69,7 @@ class MenuItem(Base):
     active = Column(Boolean, default=True)
     out_of_stock = Column(Boolean, default=False)
     category = relationship("MenuCategory", back_populates="items")
+
 
 class Order(Base):
     __tablename__ = "orders"
@@ -78,6 +86,7 @@ class Order(Base):
     items = relationship("OrderItem", back_populates="order")
     bill = relationship("Bill", back_populates="order", uselist=False)
 
+
 class OrderItem(Base):
     __tablename__ = "order_items"
     order_item_id = Column(Integer, primary_key=True, index=True)
@@ -90,6 +99,7 @@ class OrderItem(Base):
     canceled_reason = Column(Text, nullable=True)
     order = relationship("Order", back_populates="items")
     menu_item = relationship("MenuItem")
+
 
 class Bill(Base):
     __tablename__ = "bills"
@@ -104,6 +114,7 @@ class Bill(Base):
     paid_at = Column(DateTime, nullable=True)
     order = relationship("Order", back_populates="bill")
     issued_by = relationship("User")
+
 
 class AuditLog(Base):
     __tablename__ = "audit_logs"

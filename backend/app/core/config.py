@@ -1,5 +1,5 @@
 from pydantic_settings import BaseSettings
-from typing import Optional
+
 
 class Settings(BaseSettings):
     APP_NAME: str = "Sistema Gestión Restaurante"
@@ -12,5 +12,6 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
         extra = "ignore"
+
 
 settings = Settings()

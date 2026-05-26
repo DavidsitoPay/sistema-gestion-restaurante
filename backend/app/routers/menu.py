@@ -8,9 +8,11 @@ from app.schemas.schemas import CategoryCreate, CategoryOut, MenuItemCreate, Men
 
 router = APIRouter(prefix="/api/menu", tags=["menu"])
 
+
 @router.get("/categories", response_model=List[CategoryOut])
 def list_categories(db: Session = Depends(get_db), _=Depends(get_current_user)):
-    return db.query(MenuCategory).filter(MenuCategory.active == True).all()
+    return db.query(MenuCategory).filter(MenuCategory.active).all()
+
 
 @router.post("/categories", response_model=CategoryOut, status_code=201)
 def create_category(data: CategoryCreate, db: Session = Depends(get_db), _=Depends(require_roles(RoleEnum.ADMIN))):
@@ -22,6 +24,7 @@ def create_category(data: CategoryCreate, db: Session = Depends(get_db), _=Depen
     db.refresh(cat)
     return cat
 
+
 @router.delete("/categories/{cat_id}", status_code=204)
 def delete_category(cat_id: int, db: Session = Depends(get_db), _=Depends(require_roles(RoleEnum.ADMIN))):
     cat = db.query(MenuCategory).filter(MenuCategory.category_id == cat_id).first()
@@ -30,13 +33,17 @@ def delete_category(cat_id: int, db: Session = Depends(get_db), _=Depends(requir
     cat.active = False
     db.commit()
 
+
 @router.get("/items", response_model=List[MenuItemOut])
 def list_items(db: Session = Depends(get_db), _=Depends(get_current_user)):
-    return db.query(MenuItem).filter(MenuItem.active == True).all()
+    return db.query(MenuItem).filter(MenuItem.active).all()
+
 
 @router.post("/items", response_model=MenuItemOut, status_code=201)
 def create_item(data: MenuItemCreate, db: Session = Depends(get_db), _=Depends(require_roles(RoleEnum.ADMIN))):
-    cat = db.query(MenuCategory).filter(MenuCategory.category_id == data.category_id, MenuCategory.active == True).first()
+    cat = db.query(MenuCategory).filter(
+        MenuCategory.category_id == data.category_id, MenuCategory.active,
+    ).first()
     if not cat:
         raise HTTPException(status_code=404, detail="Categoría no encontrada")
     item = MenuItem(**data.model_dump())
@@ -45,8 +52,12 @@ def create_item(data: MenuItemCreate, db: Session = Depends(get_db), _=Depends(r
     db.refresh(item)
     return item
 
+
 @router.put("/items/{item_id}", response_model=MenuItemOut)
-def update_item(item_id: int, data: MenuItemUpdate, db: Session = Depends(get_db), _=Depends(require_roles(RoleEnum.ADMIN))):
+def update_item(
+    item_id: int, data: MenuItemUpdate,
+    db: Session = Depends(get_db), _=Depends(require_roles(RoleEnum.ADMIN)),
+):
     item = db.query(MenuItem).filter(MenuItem.item_id == item_id).first()
     if not item:
         raise HTTPException(status_code=404, detail="Producto no encontrado")
@@ -55,6 +66,7 @@ def update_item(item_id: int, data: MenuItemUpdate, db: Session = Depends(get_db
     db.commit()
     db.refresh(item)
     return item
+
 
 @router.delete("/items/{item_id}", status_code=204)
 def delete_item(item_id: int, db: Session = Depends(get_db), _=Depends(require_roles(RoleEnum.ADMIN))):
