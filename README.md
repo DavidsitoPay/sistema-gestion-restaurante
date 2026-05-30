@@ -151,3 +151,5 @@ El pipeline en `.github/workflows/ci.yml` ejecuta automáticamente en cada push/
 - ✅ Gestión de usuarios y roles
 - ✅ Reportes de ventas y top productos
 - ✅ Bitácora de auditoría
+
+..
