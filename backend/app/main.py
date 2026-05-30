@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.database import Base, engine, SessionLocal
@@ -63,7 +64,9 @@ def run_seed_if_empty():
         db.close()
 
 
-run_seed_if_empty()
+# Solo correr seed en producción (no durante tests)
+if os.getenv("ENVIRONMENT") != "test":
+    run_seed_if_empty()
 
 app = FastAPI(title="Sistema Gestión Restaurante", version="1.0.0")
 
