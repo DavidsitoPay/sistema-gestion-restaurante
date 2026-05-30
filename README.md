@@ -12,6 +12,8 @@ Sistema web para la gestión de mesas, pedidos, cocina y facturación de un rest
 | Auth | JWT + RBAC (5 roles) |
 | CI/CD | GitHub Actions |
 
+<img width="3056" height="1834" alt="c4_container_nivel2" src="https://github.com/user-attachments/assets/3bdbd398-d009-4add-9e7f-ed8eb3c9573a" />
+
 ## Roles del sistema
 
 | Usuario | Contraseña | Rol |
