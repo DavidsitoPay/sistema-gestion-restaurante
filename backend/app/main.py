@@ -6,20 +6,20 @@ from app.models import user  # noqa
 
 Base.metadata.create_all(bind=engine)
 
-# ── Auto-seed: crea datos iniciales si la BD está vacía ───────────────────────
+
 def run_seed_if_empty():
     from app.models.user import User, RestaurantTable, MenuCategory, MenuItem, RoleEnum
     from app.core.security import hash_password
     db = SessionLocal()
     try:
         if db.query(User).count() > 0:
-            return  # Ya tiene datos, no hacer nada
+            return
         users_data = [
-            ("admin",   "admin123",  "Administrador", RoleEnum.ADMIN),
-            ("host1",   "host123",   "María Host",    RoleEnum.HOST),
+            ("admin", "admin123", "Administrador", RoleEnum.ADMIN),
+            ("host1", "host123", "María Host", RoleEnum.HOST),
             ("mesero1", "mesero123", "Carlos Mesero", RoleEnum.MESERO),
-            ("cocina1", "cocina123", "Chef Juan",     RoleEnum.COCINA),
-            ("cajero1", "cajero123", "Ana Cajero",    RoleEnum.CAJERO),
+            ("cocina1", "cocina123", "Chef Juan", RoleEnum.COCINA),
+            ("cajero1", "cajero123", "Ana Cajero", RoleEnum.CAJERO),
         ]
         for username, pwd, name, role in users_data:
             db.add(User(username=username, password_hash=hash_password(pwd),
@@ -36,19 +36,19 @@ def run_seed_if_empty():
             db.flush()
             cat_objs[cname] = cat
         items = [
-            ("Entradas",       "Sopa del día",        35.00),
-            ("Entradas",       "Ensalada César",       45.00),
-            ("Entradas",       "Pan con ajo",          25.00),
-            ("Platos Fuertes", "Carne asada",         120.00),
-            ("Platos Fuertes", "Pollo a la plancha",   95.00),
-            ("Platos Fuertes", "Pasta Alfredo",        85.00),
-            ("Platos Fuertes", "Filete de pescado",   110.00),
-            ("Bebidas",        "Agua pura",            15.00),
-            ("Bebidas",        "Refresco",             20.00),
-            ("Bebidas",        "Jugo natural",         30.00),
-            ("Bebidas",        "Café",                 18.00),
-            ("Postres",        "Pastel de chocolate",  45.00),
-            ("Postres",        "Helado 3 bolas",       35.00),
+            ("Entradas", "Sopa del día", 35.00),
+            ("Entradas", "Ensalada César", 45.00),
+            ("Entradas", "Pan con ajo", 25.00),
+            ("Platos Fuertes", "Carne asada", 120.00),
+            ("Platos Fuertes", "Pollo a la plancha", 95.00),
+            ("Platos Fuertes", "Pasta Alfredo", 85.00),
+            ("Platos Fuertes", "Filete de pescado", 110.00),
+            ("Bebidas", "Agua pura", 15.00),
+            ("Bebidas", "Refresco", 20.00),
+            ("Bebidas", "Jugo natural", 30.00),
+            ("Bebidas", "Café", 18.00),
+            ("Postres", "Pastel de chocolate", 45.00),
+            ("Postres", "Helado 3 bolas", 35.00),
         ]
         for cat_name, item_name, price in items:
             cat = cat_objs.get(cat_name)
@@ -62,8 +62,8 @@ def run_seed_if_empty():
     finally:
         db.close()
 
+
 run_seed_if_empty()
-# ─────────────────────────────────────────────────────────────────────────────
 
 app = FastAPI(title="Sistema Gestión Restaurante", version="1.0.0")
 
@@ -83,9 +83,11 @@ app.include_router(orders.router)
 app.include_router(billing.router)
 app.include_router(reports.router)
 
+
 @app.get("/")
 def root():
     return {"status": "ok", "app": "Sistema Gestión Restaurante v1.0"}
+
 
 @app.get("/health")
 def health():
